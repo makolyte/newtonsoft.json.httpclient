@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json.HttpClientExtensions;
-using Newtonsoft.Json.HttpClientTests;
+using Newtonsoft.Json.HttpClientExtension.Tests;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;

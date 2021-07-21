@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Newtonsoft.Json.HttpClientExtensionTests
+namespace Newtonsoft.Json.HttpClientExtension.Tests
 {
     public class Person
     {
