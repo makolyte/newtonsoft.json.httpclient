@@ -10,6 +10,7 @@ using Moq;
 using Moq.Protected;
 using System.Threading;
 using Newtonsoft.Json;
+using System.Net;
 
 namespace Newtonsoft.Json.HttpClientExtension.Tests
 {
@@ -17,6 +18,23 @@ namespace Newtonsoft.Json.HttpClientExtension.Tests
     public class NewtonsoftHttpClientExtensionsTests
     {
         private const string URI = "http://localhost:12345/";
+
+        private static HttpClient Build(string json, HttpStatusCode statusCode)
+        {
+            var httpClient = new HttpClient();
+
+            HttpResponseMessage httpResponse = new HttpResponseMessage();
+            httpResponse.StatusCode = statusCode;
+            httpResponse.Content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var mockHandler = new Mock<HttpMessageHandler>();
+            mockHandler.Protected()
+                .Setup<Task<HttpResponseMessage>>("SendAsync",
+                ItExpr.Is<HttpRequestMessage>(r => r.Method == HttpMethod.Get && r.RequestUri.ToString().Equals(URI)),
+                ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(httpResponse);
+            return httpClient;
+        }
 
         [TestMethod()]
         public async Task GetTest_WhenHttpClientNull_ThrowsException()
@@ -46,18 +64,7 @@ namespace Newtonsoft.Json.HttpClientExtension.Tests
         public async Task GetTest_WhenStatusNotOK_ThrowsException()
         {
             //arrange
-            var httpClient = new HttpClient();
-
-            HttpResponseMessage httpResponse = new HttpResponseMessage();
-            httpResponse.StatusCode = System.Net.HttpStatusCode.BadRequest;
-            httpResponse.Content = new StringContent("{}", Encoding.UTF8, "application/json");
-
-            var mockHandler = new Mock<HttpMessageHandler>();
-            mockHandler.Protected()
-                .Setup<Task<HttpResponseMessage>>("SendAsync",
-                ItExpr.Is<HttpRequestMessage>(r => r.Method == HttpMethod.Get && r.RequestUri.ToString().Equals(URI)),
-                ItExpr.IsAny<CancellationToken>())
-                .ReturnsAsync(httpResponse);
+            HttpClient httpClient = Build("{}", HttpStatusCode.BadRequest);
 
 
             //act and assert
@@ -65,6 +72,20 @@ namespace Newtonsoft.Json.HttpClientExtension.Tests
 
         }
 
-        
+
+
+        [TestMethod()]
+        public async Task GetTest_WhenJsonInvalid_Throws()
+        {
+            //arrange
+            var httpClient = Build("{", HttpStatusCode.OK);
+
+
+            //act and assert
+            await Assert.ThrowsExceptionAsync<HttpRequestException>(async () => await httpClient.GetFromJsonAsync<Person>(URI));
+
+        }
+
+
     }
 }
