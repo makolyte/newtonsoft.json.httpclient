@@ -27,7 +27,7 @@ namespace Newtonsoft.Json.HttpClientExtension.Tests
             BirthDate = new DateTime(year: 1977, month: 7, day: 7)
         };
 
-        private static HttpClient Build(string json, HttpStatusCode statusCode)
+        private static HttpClient BuildForGet(string json, HttpStatusCode statusCode)
         {
             HttpResponseMessage httpResponse = new HttpResponseMessage();
             httpResponse.StatusCode = statusCode;
@@ -42,6 +42,7 @@ namespace Newtonsoft.Json.HttpClientExtension.Tests
             
             return new HttpClient(mockHandler.Object);
         }
+
 
         [TestMethod()]
         public async Task GetTest_WhenHttpClientNull_ThrowsException()
@@ -71,7 +72,7 @@ namespace Newtonsoft.Json.HttpClientExtension.Tests
         public async Task GetTest_WhenStatusNotOK_ThrowsException()
         {
             //arrange
-            HttpClient httpClient = Build("{}", HttpStatusCode.BadRequest);
+            HttpClient httpClient = BuildForGet("{}", HttpStatusCode.BadRequest);
 
 
             //act and assert
@@ -83,7 +84,7 @@ namespace Newtonsoft.Json.HttpClientExtension.Tests
         public async Task GetTest_WhenJsonInvalid_Throws()
         {
             //arrange
-            var httpClient = Build("{", HttpStatusCode.OK);
+            var httpClient = BuildForGet("{", HttpStatusCode.OK);
 
 
             //act and assert
@@ -95,7 +96,7 @@ namespace Newtonsoft.Json.HttpClientExtension.Tests
         public async Task GetTest_VerifySerializerSettingsAreUsed()
         {
             //arrange
-            var httpClient = Build("{\"NotAProp\":1}", HttpStatusCode.OK);
+            var httpClient = BuildForGet("{\"NotAProp\":1}", HttpStatusCode.OK);
 
             var jsonSettings = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Error };
 
@@ -110,7 +111,7 @@ namespace Newtonsoft.Json.HttpClientExtension.Tests
         {
             //arrange
             var json = JsonConvert.SerializeObject(PERSON);
-            var httpClient = Build(json, HttpStatusCode.OK);
+            var httpClient = BuildForGet(json, HttpStatusCode.OK);
 
 
             //act
@@ -155,6 +156,25 @@ namespace Newtonsoft.Json.HttpClientExtension.Tests
                 await httpClient.PostAsJsonAsync<Person>(URI, null));
 
         }
+        [TestMethod()]
+        public async Task PostTest_VerifyUsesSettingsForSerialization()
+        {
+            //arrange
+            var httpClient = new HttpClient();
+            var jsonSettings = new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Error };
+            var circle1 = new Circular();
+            var circle2 = new Circular()
+            {
+                Link = circle1
+            };
+            circle1.Link = circle2;
 
+
+            //act and assert
+            await Assert.ThrowsExceptionAsync<JsonSerializationException>(async () => await httpClient.PostAsJsonAsync<Circular>(URI, circle1));
+
+        }
+        //when status not ok, throws
+        //when status ok, returns response object
     }
 }

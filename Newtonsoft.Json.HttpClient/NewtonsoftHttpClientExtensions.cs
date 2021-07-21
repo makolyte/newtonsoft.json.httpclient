@@ -30,6 +30,8 @@ namespace Newtonsoft.Json.HttpClientExtensions
                 throw new ArgumentNullException(nameof(value));
             }
 
+            var json = JsonConvert.SerializeObject(value, settings);
+
             throw new NotImplementedException();
         }
 
