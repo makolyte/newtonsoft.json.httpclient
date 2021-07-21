@@ -36,6 +36,11 @@ namespace Newtonsoft.Json.HttpClientExtensions
                 throw new ArgumentNullException(nameof(httpClient));
             }
 
+            if (string.IsNullOrWhiteSpace(uri))
+            {
+                throw new ArgumentException("Can't be null or empty", nameof(uri));
+            }
+
             throw new NotImplementedException();
         }
     }
