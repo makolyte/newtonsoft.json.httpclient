@@ -6,6 +6,8 @@
     <IsPackable>false</IsPackable>
 
     <AssemblyName>Newtonsoft.Json.HttpClientExtension.Tests</AssemblyName>
+
+    <RootNamespace>Newtonsoft.Json.HttpClientExtension.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
