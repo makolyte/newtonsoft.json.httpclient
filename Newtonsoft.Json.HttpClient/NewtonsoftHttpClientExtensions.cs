@@ -24,6 +24,10 @@ namespace Newtonsoft.Json.HttpClientExtensions
 
             response.EnsureSuccessStatusCode();
 
+            var json = await response.Content.ReadAsStringAsync();
+
+            JsonConvert.DeserializeObject<T>(json, settings);
+
             throw new NotImplementedException();
         }
 

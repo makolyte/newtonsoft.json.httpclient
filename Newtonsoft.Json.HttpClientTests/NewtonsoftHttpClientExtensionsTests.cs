@@ -71,24 +71,31 @@ namespace Newtonsoft.Json.HttpClientExtension.Tests
 
         }
 
-
-
         [TestMethod()]
         public async Task GetTest_WhenJsonInvalid_Throws()
         {
             //arrange
-            var httpClient = Build("{}", HttpStatusCode.OK);
+            var httpClient = Build("{", HttpStatusCode.OK);
 
 
             //act and assert
-            await httpClient.GetFromJsonAsync<Person>(URI);
-
-
-           //await Assert.ThrowsExceptionAsync<HttpRequestException>(async () => await httpClient.GetFromJsonAsync<Person>(URI));
+           await Assert.ThrowsExceptionAsync<JsonSerializationException>(async () => await httpClient.GetFromJsonAsync<Person>(URI));
 
         }
 
-        //when media type is not json
+        [TestMethod()]
+        public async Task GetTest_VerifySerializerSettingsAreUsed()
+        {
+            //arrange
+            var httpClient = Build("{\"NotAProp\":1}", HttpStatusCode.OK);
+
+            var jsonSettings = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Error };
+
+
+            //act and assert
+            await Assert.ThrowsExceptionAsync<JsonSerializationException>(async () => await httpClient.GetFromJsonAsync<Person>(URI, jsonSettings));
+
+        }
 
 
     }
