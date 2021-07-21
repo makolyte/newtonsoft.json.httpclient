@@ -19,6 +19,13 @@ namespace Newtonsoft.Json.HttpClientExtension.Tests
     public class NewtonsoftHttpClientExtensionsTests
     {
         private const string URI = "http://localhost:12345/";
+        private readonly Person PERSON = new Person()
+        {
+            FirstName = "Bob",
+            LastName = "Test",
+            IsProgrammer = true,
+            BirthDate = new DateTime(year: 1977, month: 7, day: 7)
+        };
 
         private static HttpClient Build(string json, HttpStatusCode statusCode)
         {
@@ -102,14 +109,7 @@ namespace Newtonsoft.Json.HttpClientExtension.Tests
         public async Task GetTest_ReturnsDeserializedJsonFromHttpGet()
         {
             //arrange
-            var expectedPerson = new Person()
-            {
-                FirstName = "Bob",
-                LastName = "Test",
-                IsProgrammer = true,
-                BirthDate = new DateTime(year: 1977, month: 7, day: 7)
-            };
-            var json = JsonConvert.SerializeObject(expectedPerson);
+            var json = JsonConvert.SerializeObject(PERSON);
             var httpClient = Build(json, HttpStatusCode.OK);
 
 
@@ -117,7 +117,18 @@ namespace Newtonsoft.Json.HttpClientExtension.Tests
             var actualPerson = await httpClient.GetFromJsonAsync<Person>(URI);
 
             //assert
-            actualPerson.Should().BeEquivalentTo(expectedPerson);
+            actualPerson.Should().BeEquivalentTo(PERSON);
+
+        }
+        [TestMethod()]
+        public async Task PostTest_WhenHttpClientNull_ThrowsException()
+        {
+            //arrange
+            HttpClient httpClient = null;
+
+            //act and assert
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => 
+                await httpClient.PostAsJsonAsync<Person>(URI, PERSON));
 
         }
 
