@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using Newtonsoft.Json;
 using System.Threading;
+using System.Text;
 
 namespace Newtonsoft.Json.HttpClientExtensions
 {
@@ -31,6 +32,10 @@ namespace Newtonsoft.Json.HttpClientExtensions
             }
 
             var json = JsonConvert.SerializeObject(value, settings);
+
+            var response = await httpClient.PostAsync(uri, new StringContent(json, Encoding.UTF8, "application/json"), cancellationToken);
+
+            response.EnsureSuccessStatusCode();
 
             throw new NotImplementedException();
         }

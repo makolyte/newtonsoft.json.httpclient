@@ -174,7 +174,31 @@ namespace Newtonsoft.Json.HttpClientExtension.Tests
             await Assert.ThrowsExceptionAsync<JsonSerializationException>(async () => await httpClient.PostAsJsonAsync<Circular>(URI, circle1));
 
         }
-        //when status not ok, throws
+        [TestMethod()]
+        public async Task PostTest_WhenStatusNotOk_ThrowsException()
+        {
+            //arrange
+            var expectedJson = JsonConvert.SerializeObject(PERSON);
+
+            HttpResponseMessage httpResponse = new HttpResponseMessage();
+            httpResponse.StatusCode = HttpStatusCode.BadRequest;
+
+            var mockHandler = new Mock<HttpMessageHandler>();
+            mockHandler.Protected()
+                .Setup<Task<HttpResponseMessage>>("SendAsync",
+                ItExpr.Is<HttpRequestMessage>(r =>
+                r.Method == HttpMethod.Post && r.RequestUri.ToString().StartsWith(URI) &&
+                    r.Content.ReadAsStringAsync().GetAwaiter().GetResult() == expectedJson),
+                ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(httpResponse);
+
+            var httpClient = new HttpClient(mockHandler.Object);
+
+
+            //act and assert
+            await Assert.ThrowsExceptionAsync<HttpRequestException>(async () => await httpClient.PostAsJsonAsync<Person>(URI, PERSON));
+
+        }
         //when status ok, returns response object
     }
 }
