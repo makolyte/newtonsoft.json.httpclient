@@ -26,9 +26,7 @@ namespace Newtonsoft.Json.HttpClientExtensions
 
             var json = await response.Content.ReadAsStringAsync();
 
-            JsonConvert.DeserializeObject<T>(json, settings);
-
-            throw new NotImplementedException();
+            return JsonConvert.DeserializeObject<T>(json, settings);
         }
 
         public static async Task<HttpResponseMessage> PostAsJsonAsync<T>(this HttpClient httpClient, string uri, T value, JsonSerializerSettings settings = null, CancellationToken cancellationToken = default)

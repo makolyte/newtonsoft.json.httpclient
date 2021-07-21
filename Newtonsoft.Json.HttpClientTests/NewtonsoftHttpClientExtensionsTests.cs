@@ -11,6 +11,7 @@ using Moq.Protected;
 using System.Threading;
 using Newtonsoft.Json;
 using System.Net;
+using FluentAssertions;
 
 namespace Newtonsoft.Json.HttpClientExtension.Tests
 {
@@ -94,6 +95,29 @@ namespace Newtonsoft.Json.HttpClientExtension.Tests
 
             //act and assert
             await Assert.ThrowsExceptionAsync<JsonSerializationException>(async () => await httpClient.GetFromJsonAsync<Person>(URI, jsonSettings));
+
+        }
+
+        [TestMethod()]
+        public async Task GetTest_ReturnsDeserializedJsonFromHttpGet()
+        {
+            //arrange
+            var expectedPerson = new Person()
+            {
+                FirstName = "Bob",
+                LastName = "Test",
+                IsProgrammer = true,
+                BirthDate = new DateTime(year: 1977, month: 7, day: 7)
+            };
+            var json = JsonConvert.SerializeObject(expectedPerson);
+            var httpClient = Build(json, HttpStatusCode.OK);
+
+
+            //act
+            var actualPerson = await httpClient.GetFromJsonAsync<Person>(URI);
+
+            //assert
+            actualPerson.Should().BeEquivalentTo(expectedPerson);
 
         }
 
