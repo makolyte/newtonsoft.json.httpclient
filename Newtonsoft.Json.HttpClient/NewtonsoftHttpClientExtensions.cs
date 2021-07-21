@@ -14,11 +14,15 @@ namespace Newtonsoft.Json.HttpClientExtensions
             {
                 throw new ArgumentNullException(nameof(httpClient));
             }
-            
+
             if (string.IsNullOrWhiteSpace(uri))
             {
                 throw new ArgumentException("Can't be null or empty", nameof(uri));
             }
+
+            var response = await httpClient.GetAsync(uri, cancellationToken);
+
+            response.EnsureSuccessStatusCode();
 
             throw new NotImplementedException();
         }
