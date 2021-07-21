@@ -25,6 +25,11 @@ namespace Newtonsoft.Json.HttpClientExtensions
         {
             ThrowIfInvalidParams(httpClient, uri);
 
+            if (value is null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
             throw new NotImplementedException();
         }
 

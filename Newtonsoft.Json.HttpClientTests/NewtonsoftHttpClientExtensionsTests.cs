@@ -144,7 +144,17 @@ namespace Newtonsoft.Json.HttpClientExtension.Tests
             await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await httpClient.PostAsJsonAsync<Person>(emptyUri, PERSON));
 
         }
+        [TestMethod()]
+        public async Task PostTest_ValueToSendIsNull_ThrowsException()
+        {
+            //arrange
+            HttpClient httpClient = new HttpClient();
 
+            //act and assert
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () =>
+                await httpClient.PostAsJsonAsync<Person>(URI, null));
+
+        }
 
     }
 }
