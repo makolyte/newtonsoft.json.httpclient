@@ -1,7 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json.HttpClientExtensions;
+using Newtonsoft.Json.HttpClientTests;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
 
 namespace Newtonsoft.Json.HttpClientExtension.Tests
@@ -10,9 +12,15 @@ namespace Newtonsoft.Json.HttpClientExtension.Tests
     public class NewtonsoftHttpClientExtensionsTests
     {
         [TestMethod()]
-        public void Test()
+        public void Get()
         {
-            Assert.Fail();
+            //arrange
+            var httpClient = new HttpClient();
+
+            //act
+            httpClient.GetFromJsonAsync<Person>()
+
+            //assert
         }
     }
 }

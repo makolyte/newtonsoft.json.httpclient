@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Newtonsoft.Json.HttpClientExtensions", "Newtonsoft.Json.HttpClientExtensions.csproj", "{A16FBAEE-A504-48B9-8E71-2E28F2409B89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Newtonsoft.Json.HttpClientTests", "..\Newtonsoft.Json.HttpClientTests\Newtonsoft.Json.HttpClientTests.csproj", "{45CE3EDA-33EB-4909-86F9-B6EA5CFE1D5E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Newtonsoft.Json.HttpClientExtensionTests", "..\Newtonsoft.Json.HttpClientTests\Newtonsoft.Json.HttpClientExtensionTests.csproj", "{45CE3EDA-33EB-4909-86F9-B6EA5CFE1D5E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewtonsoftHttpClientExample", "..\NewtonsoftHttpClientExample\NewtonsoftHttpClientExample.csproj", "{E49487AB-D287-4CE9-A83C-77B6E60C40E5}"
 EndProject
