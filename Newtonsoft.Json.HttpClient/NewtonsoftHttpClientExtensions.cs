@@ -31,6 +31,11 @@ namespace Newtonsoft.Json.HttpClientExtensions
 
         public static async Task<HttpResponseMessage> PostAsJsonAsync<T>(this HttpClient httpClient, string uri, T value, JsonSerializerSettings settings = null, CancellationToken cancellationToken = default)
         {
+            if (httpClient == null)
+            {
+                throw new ArgumentNullException(nameof(httpClient));
+            }
+
             throw new NotImplementedException();
         }
     }
