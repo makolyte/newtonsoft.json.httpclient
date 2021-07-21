@@ -37,7 +37,7 @@ namespace Newtonsoft.Json.HttpClientExtensions
 
             response.EnsureSuccessStatusCode();
 
-            throw new NotImplementedException();
+            return response;
         }
 
         private static void ThrowIfInvalidParams(HttpClient httpClient, string uri)

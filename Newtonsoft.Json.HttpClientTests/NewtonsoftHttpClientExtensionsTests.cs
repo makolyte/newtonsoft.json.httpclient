@@ -43,6 +43,25 @@ namespace Newtonsoft.Json.HttpClientExtension.Tests
             return new HttpClient(mockHandler.Object);
         }
 
+        private static (HttpClient, HttpResponseMessage) BuildForPost(string expectedJson, HttpStatusCode statusCode)
+        {
+            HttpResponseMessage httpResponse = new HttpResponseMessage();
+            httpResponse.StatusCode = statusCode;
+            httpResponse.Content = new StringContent("Content");
+
+            var mockHandler = new Mock<HttpMessageHandler>();
+            mockHandler.Protected()
+                .Setup<Task<HttpResponseMessage>>("SendAsync",
+                ItExpr.Is<HttpRequestMessage>(r =>
+                r.Method == HttpMethod.Post && r.RequestUri.ToString().StartsWith(URI) &&
+                    r.Content.ReadAsStringAsync().GetAwaiter().GetResult() == expectedJson),
+                ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(httpResponse);
+
+            var httpClient = new HttpClient(mockHandler.Object);
+
+            return (httpClient, httpResponse);
+        }
 
         [TestMethod()]
         public async Task GetTest_WhenHttpClientNull_ThrowsException()
@@ -67,7 +86,6 @@ namespace Newtonsoft.Json.HttpClientExtension.Tests
             await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await httpClient.GetFromJsonAsync<Person>(emptyUri));
 
         }
-
         [TestMethod()]
         public async Task GetTest_WhenStatusNotOK_ThrowsException()
         {
@@ -79,7 +97,6 @@ namespace Newtonsoft.Json.HttpClientExtension.Tests
             await Assert.ThrowsExceptionAsync<HttpRequestException>(async () => await httpClient.GetFromJsonAsync<Person>(URI));
 
         }
-
         [TestMethod()]
         public async Task GetTest_WhenJsonInvalid_Throws()
         {
@@ -91,7 +108,6 @@ namespace Newtonsoft.Json.HttpClientExtension.Tests
            await Assert.ThrowsExceptionAsync<JsonSerializationException>(async () => await httpClient.GetFromJsonAsync<Person>(URI));
 
         }
-
         [TestMethod()]
         public async Task GetTest_VerifySerializerSettingsAreUsed()
         {
@@ -105,7 +121,6 @@ namespace Newtonsoft.Json.HttpClientExtension.Tests
             await Assert.ThrowsExceptionAsync<JsonSerializationException>(async () => await httpClient.GetFromJsonAsync<Person>(URI, jsonSettings));
 
         }
-
         [TestMethod()]
         public async Task GetTest_ReturnsDeserializedJsonFromHttpGet()
         {
@@ -174,14 +189,29 @@ namespace Newtonsoft.Json.HttpClientExtension.Tests
             await Assert.ThrowsExceptionAsync<JsonSerializationException>(async () => await httpClient.PostAsJsonAsync<Circular>(URI, circle1));
 
         }
+
         [TestMethod()]
         public async Task PostTest_WhenStatusNotOk_ThrowsException()
         {
             //arrange
             var expectedJson = JsonConvert.SerializeObject(PERSON);
 
+            (var httpClient, var httpResponse) = BuildForPost(expectedJson, HttpStatusCode.BadRequest);
+
+
+            //act and assert
+            await Assert.ThrowsExceptionAsync<HttpRequestException>(async () => await httpClient.PostAsJsonAsync<Person>(URI, PERSON));
+
+        }
+        [TestMethod()]
+        public async Task PostTest_WhenStatusOk_ReturnsResponse()
+        {
+            //arrange
+            var expectedJson = JsonConvert.SerializeObject(PERSON);
+
             HttpResponseMessage httpResponse = new HttpResponseMessage();
-            httpResponse.StatusCode = HttpStatusCode.BadRequest;
+            httpResponse.StatusCode = HttpStatusCode.OK;
+            httpResponse.Content = new StringContent("Content");
 
             var mockHandler = new Mock<HttpMessageHandler>();
             mockHandler.Protected()
@@ -195,10 +225,12 @@ namespace Newtonsoft.Json.HttpClientExtension.Tests
             var httpClient = new HttpClient(mockHandler.Object);
 
 
-            //act and assert
-            await Assert.ThrowsExceptionAsync<HttpRequestException>(async () => await httpClient.PostAsJsonAsync<Person>(URI, PERSON));
+            //act
+            var response = await httpClient.PostAsJsonAsync<Person>(URI, PERSON);
+
+            //assert
+            response.Should().BeSameAs(httpResponse);
 
         }
-        //when status ok, returns response object
     }
 }
