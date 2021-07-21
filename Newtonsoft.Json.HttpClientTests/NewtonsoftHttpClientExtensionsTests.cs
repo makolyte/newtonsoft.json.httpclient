@@ -209,20 +209,7 @@ namespace Newtonsoft.Json.HttpClientExtension.Tests
             //arrange
             var expectedJson = JsonConvert.SerializeObject(PERSON);
 
-            HttpResponseMessage httpResponse = new HttpResponseMessage();
-            httpResponse.StatusCode = HttpStatusCode.OK;
-            httpResponse.Content = new StringContent("Content");
-
-            var mockHandler = new Mock<HttpMessageHandler>();
-            mockHandler.Protected()
-                .Setup<Task<HttpResponseMessage>>("SendAsync",
-                ItExpr.Is<HttpRequestMessage>(r =>
-                r.Method == HttpMethod.Post && r.RequestUri.ToString().StartsWith(URI) &&
-                    r.Content.ReadAsStringAsync().GetAwaiter().GetResult() == expectedJson),
-                ItExpr.IsAny<CancellationToken>())
-                .ReturnsAsync(httpResponse);
-
-            var httpClient = new HttpClient(mockHandler.Object);
+            (var httpClient, var httpResponse) = BuildForPost(expectedJson, HttpStatusCode.OK);
 
 
             //act
