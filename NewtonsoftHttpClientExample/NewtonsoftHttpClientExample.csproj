@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Newtonsoft.Json.HttpClient\Newtonsoft.Json.HttpClient.csproj" />
+    <ProjectReference Include="..\Newtonsoft.Json.HttpClient\Newtonsoft.Json.HttpClientExtensions.csproj" />
   </ItemGroup>
 
 </Project>

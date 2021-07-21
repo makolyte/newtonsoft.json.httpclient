@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Newtonsoft.Json.HttpClient.Tests
+namespace Newtonsoft.Json.HttpClientExtension.Tests
 {
     [TestClass()]
     public class NewtonsoftHttpClientExtensionsTests
