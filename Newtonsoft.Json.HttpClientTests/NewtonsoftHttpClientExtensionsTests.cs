@@ -5,20 +5,23 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Newtonsoft.Json.HttpClientExtension.Tests
 {
     [TestClass()]
     public class NewtonsoftHttpClientExtensionsTests
     {
+        private const string URI = "http://localhost:12345/";
+
         [TestMethod()]
-        public void Get()
+        public async Task GetTest_WhenHttpClientNull_ThrowsException()
         {
             //arrange
-            var httpClient = new HttpClient();
+            HttpClient httpClient = null;
 
-            //act
-            httpClient.GetFromJsonAsync<Person>()
+            //act and assert
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async() => await httpClient.GetFromJsonAsync<Person>(URI));
 
             //assert
         }

@@ -10,6 +10,10 @@ namespace Newtonsoft.Json.HttpClientExtensions
     {
         public static async Task<T> GetFromJsonAsync<T>(this HttpClient httpClient, string uri, JsonSerializerSettings settings = null, CancellationToken cancellationToken = default)
         {
+            if (httpClient == null)
+            {
+                throw new ArgumentNullException(nameof(httpClient));
+            }
 
             throw new NotImplementedException();
         }
